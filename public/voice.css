@@ -1,0 +1,4 @@
+.listen-button { background:rgba(143,185,229,.16); border:1px solid rgba(143,185,229,.44); color:#dceafb; }
+.listen-button.is-listening { background:rgba(242,210,125,.92); color:#182237; border-color:#f2d27d; animation:listen-pulse 1s ease-in-out infinite; }
+@keyframes listen-pulse { 50% { box-shadow:0 0 0 8px rgba(242,210,125,0); } }
+@media (prefers-reduced-motion: reduce) { .listen-button.is-listening { animation:none; } }

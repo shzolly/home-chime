@@ -1,0 +1,14 @@
+{
+  "name": "home-chime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Feature-first home assistant dashboard for Raspberry Pi",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

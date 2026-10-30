@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Private Home Chime settings for a household dashboard." />
+    <title>Home Chime Admin</title>
+    <link rel="stylesheet" href="/admin.css" />
+    <link rel="stylesheet" href="/events.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <section id="login-view" class="login-view" aria-labelledby="login-title">
+        <p class="wordmark">Home Chime</p>
+        <h1 id="login-title">Home administration</h1>
+        <p>Use the owner password configured on the Raspberry Pi.</p>
+        <form id="login-form">
+          <label for="password">Owner password</label>
+          <input id="password" type="password" autocomplete="current-password" required />
+          <button type="submit">Open admin</button>
+          <p id="login-message" class="message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="setup-view" class="login-view hidden" aria-labelledby="setup-title">
+        <p class="wordmark">Home Chime</p>
+        <h1 id="setup-title">Admin is not configured</h1>
+        <p>Set <code>HOME_CHIME_ADMIN_PASSWORD</code> before starting the app. This keeps settings private on your home network.</p>
+      </section>
+
+      <section id="admin-view" class="hidden" aria-live="polite">
+        <header class="admin-header">
+          <a class="wordmark" href="/">Home Chime</a>
+          <div><span>Home network admin</span><button id="logout" class="text-button" type="button">Sign out</button></div>
+        </header>
+
+        <div class="admin-intro"><div><p class="section-label">Settings</p><h1>Keep home in sync</h1></div><p>Changes save on the Pi and appear on the dashboard without replacing its calm home screen.</p></div>
+
+        <div class="admin-grid">
+          <section class="panel" aria-labelledby="family-title">
+            <div class="panel-heading"><div><p class="section-label">Household</p><h2 id="family-title">Family members</h2></div></div>
+            <ul id="family-list" class="family-list" aria-live="polite"></ul>
+            <form id="family-form" class="family-form">
+              <label for="member-name">Family member</label>
+              <div class="form-row"><input id="member-name" maxlength="60" placeholder="Name" required /><input id="member-birthday" maxlength="5" inputmode="numeric" pattern="\d{2}-\d{2}" placeholder="Birthday MM-DD" aria-label="Birthday, month and day" /><input id="member-color" type="color" value="#4f7cac" aria-label="Member color" /><button id="family-submit" type="submit">Add</button><button id="family-cancel" class="text-button hidden" type="button">Cancel</button></div>
+              <p id="family-message" class="message" role="status"></p>
+            </form>
+          </section>
+
+          <section class="panel" aria-labelledby="dashboard-title">
+            <div class="panel-heading"><div><p class="section-label">Dashboard</p><h2 id="dashboard-title">Display behavior</h2></div></div>
+            <form id="settings-form" class="settings-form">
+              <label>Weather refresh <select id="weather-refresh"><option value="5">Every 5 minutes</option><option value="10">Every 10 minutes</option><option value="30">Every 30 minutes</option><option value="60">Every hour</option></select></label>
+              <label>Calendar window <select id="calendar-window"><option value="4">Next 4 hours</option><option value="8">Next 8 hours</option><option value="12">Next 12 hours</option><option value="24">Next 24 hours</option></select></label>
+              <label>AI background refresh <select id="background-refresh"><option value="5">Every 5 minutes</option><option value="10">Every 10 minutes</option><option value="20">Every 20 minutes</option><option value="30">Every 30 minutes</option><option value="60">Every full hour</option><option value="120">Every 2 full hours</option><option value="240">Every 4 full hours</option><option value="720">Every 12 full hours</option><option value="1440">Every 24 hours</option></select></label>
+              <label for="home-address">Home base for driving <input id="home-address" maxlength="200" autocomplete="street-address" placeholder="Your home address" /></label>
+              <label>Reminder &amp; travel buffer <select id="travel-buffer"><option value="0">No buffer</option><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label>
+              <button type="submit">Save dashboard settings</button>
+              <p id="settings-message" class="message" role="status"></p>
+            </form>
+          </section>
+
+          <section class="panel full-width" aria-labelledby="calendar-title">
+            <div class="panel-heading"><div><p class="section-label">Calendar</p><h2 id="calendar-title">Household events</h2></div><span class="muted">Events are stored only on this Pi.</span></div>
+            <label class="calendar-member-picker" for="calendar-member">View schedules for <select id="calendar-member"><option value="">All family members</option></select></label>
+            <form id="event-form" class="event-form">
+              <label for="event-title">Event <input id="event-title" maxlength="120" placeholder="Piano lesson" required /></label>
+              <label for="event-date">Date <input id="event-date" type="date" required /></label>
+              <label for="event-time">Start time <input id="event-time" type="time" required /></label>
+              <label for="event-end-time">End time <input id="event-end-time" type="time" required /></label>
+              <label for="event-location">Location <input id="event-location" maxlength="160" value="Home" required /></label>
+              <label class="repeat-row"><input id="event-weekly" type="checkbox" /><span>Repeat weekly</span></label>
+              <button id="event-submit" type="submit">Add event</button><button id="event-cancel" class="text-button hidden" type="button">Cancel edit</button>
+            </form>
+            <p id="event-message" class="message" role="status"></p>
+            <p class="muted">The household reminder &amp; travel buffer applies to every event. Home events alert before their start; outside events add the buffer to driving time and refresh live traffic near departure. Each alert glows for 10 minutes.</p>
+            <ul id="event-list" class="event-list" aria-live="polite"></ul>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/admin.js"></script>
+  </body>
+</html>

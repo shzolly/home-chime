@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111a2d" />
+    <title>Home Chime</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/clock.css" />
+    <link rel="stylesheet" href="/home-motion.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-live="polite">
+      <div id="generated-background" class="generated-background" aria-hidden="true"></div>
+      <div class="atmosphere" aria-hidden="true"><span class="atmosphere-glow"></span><span class="atmosphere-star star-one"></span><span class="atmosphere-star star-two"></span><span class="atmosphere-star star-three"></span></div>
+      <header class="topbar motion-header">
+        <div class="brand"><span class="brand-mark">✦</span><span>Home Chime</span></div>
+        <div class="status"><span class="status-dot"></span><span id="status-label">Family schedule</span></div>
+      </header>
+
+      <section id="home-screen" class="screen home-screen">
+        <div class="home-left">
+          <div class="date-block motion-clock">
+          <div class="clock-context" aria-label="Current period and weekday">
+            <span id="weekday"></span>
+            <span class="clock-context-separator" aria-hidden="true">·</span>
+            <span id="day-period"></span>
+          </div>
+          <h1 id="time" class="time">--:--</h1>
+          <p id="date" class="date"></p>
+          </div>
+          <section class="weather-summary motion-weather" aria-label="Current weather and three-day forecast">
+          <div class="weather-stage" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><div class="weather-orb"><span class="sun"></span><span class="cloud cloud-one"></span><span class="cloud cloud-two"></span><span class="rain-lines"></span></div></div>
+          <div class="weather-copy">
+            <p class="eyebrow">NOW · <span id="weather-location">HOME</span></p>
+            <div class="temperature"><span id="temperature">--</span><small><span>°</span><span>F</span></small></div>
+            <p id="condition" class="condition">Loading weather</p>
+            <p id="weather-detail" class="weather-detail"></p>
+            <p id="weather-metrics" class="weather-metrics"></p>
+            <div class="forecast-strip" aria-label="Three-day forecast">
+              <div class="forecast-day"><span class="forecast-label">TODAY</span><strong id="forecast-today-condition">Loading forecast</strong><span id="forecast-today-detail"></span><span id="forecast-today-extra" class="forecast-extra"></span></div>
+              <div class="forecast-day"><span class="forecast-label">DAY +1</span><strong id="forecast-tomorrow-condition">Loading forecast</strong><span id="forecast-tomorrow-detail"></span><span id="forecast-tomorrow-extra" class="forecast-extra"></span></div>
+              <div class="forecast-day"><span class="forecast-label" aria-label="Day after tomorrow">DAY +2</span><strong id="forecast-after-condition">Loading forecast</strong><span id="forecast-after-detail"></span><span id="forecast-after-extra" class="forecast-extra"></span></div>
+            </div>
+          </div>
+          </section>
+        </div>
+        <section class="calendar-panel motion-calendar" aria-label="Family calendar" hidden>
+          <div class="calendar-heading"><div><p class="eyebrow">FAMILY CALENDAR</p><h2 id="calendar-window-title">Next 12 Hours</h2></div><span id="calendar-count" class="calendar-count">—</span></div>
+          <ul id="calendar-list" class="calendar-list"><li class="calendar-empty">Loading family schedule…</li></ul>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
