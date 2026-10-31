@@ -187,7 +187,7 @@ body[data-weather="clear"] .cloud { opacity:.25; } body[data-weather="night"] .s
 
   .weather-stage {
     width:clamp(14.25rem,19.2vw,22.5rem);
-    top:clamp(-1.55rem,-.8vw,-.45rem);
+    top:clamp(-7.4rem,-9.2vw,-5rem);
     right:auto;
     left:clamp(7.4rem,11.5vw,13rem);
   }
