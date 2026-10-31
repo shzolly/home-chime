@@ -279,6 +279,27 @@ body[data-weather="clear"] .cloud { opacity:.25; } body[data-weather="night"] .s
   line-height:1.4;
 }
 
+/* The generated photograph stays still; only the weather-aware ambience moves. */
+.generated-background {
+  transition:opacity 1.5s var(--motion-fade);
+}
+
+.generated-background.has-image {
+  animation:none;
+}
+
+.generated-background::after {
+  animation:none;
+}
+
+.generated-background-next.has-image {
+  opacity:0;
+}
+
+.generated-background-next.is-visible {
+  opacity:1;
+}
+
 .forecast-extra {
   color:#b8cee2;
   font-size:.67rem;

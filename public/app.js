@@ -3,10 +3,13 @@ const calendarList = document.querySelector('#calendar-list');
 const calendarPanel = document.querySelector('.calendar-panel');
 const statusLabel = document.querySelector('#status-label');
 const background = document.querySelector('#generated-background');
+const nextBackground = document.querySelector('#generated-background-next');
 let displayedMinute;
 let displayedBackgroundSlot;
 let backgroundVersion;
 let backgroundObjectUrl;
+let nextBackgroundObjectUrl;
+let backgroundFadeTimer;
 let backgroundLoading = false;
 
 function escapeHtml(value) {
@@ -87,7 +90,10 @@ function renderCalendar(events) {
   }).join('');
 }
 
-function setWeatherVisual(visual) { document.body.dataset.weather = visual ?? 'partly-cloudy'; }
+function setWeatherVisual(visual, wind) {
+  document.body.dataset.weather = visual ?? 'partly-cloudy';
+  document.body.dataset.windy = Number(wind) >= 14 ? 'true' : 'false';
+}
 
 function precipitationDisplay(forecast) {
   const kind = forecast?.visual === 'snow' ? 'snow' : forecast?.visual === 'storm' ? 'storm' : 'rain';
@@ -106,22 +112,47 @@ async function loadBackground(force = false, slot) {
   if (backgroundLoading) return;
   if (!slot || (!force && slot === displayedBackgroundSlot && backgroundVersion)) return;
   backgroundLoading = true;
+  let objectUrl;
   try {
     const response = await fetch('/api/background', { cache: 'no-store' });
     if (!response.ok || response.status === 204) return;
     const nextVersion = response.headers.get('x-home-chime-background-generated-at') ?? slot;
-    const objectUrl = URL.createObjectURL(await response.blob());
+    objectUrl = URL.createObjectURL(await response.blob());
     const image = new Image();
-    image.onload = () => {
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = objectUrl;
+    });
+    if (!background.classList.contains('has-image')) {
       if (backgroundObjectUrl) URL.revokeObjectURL(backgroundObjectUrl);
       backgroundObjectUrl = objectUrl;
       background.style.backgroundImage = `url("${objectUrl}")`;
       background.classList.add('has-image');
       backgroundVersion = nextVersion;
       displayedBackgroundSlot = slot;
-    };
-    image.onerror = () => URL.revokeObjectURL(objectUrl);
-    image.src = objectUrl;
+      return;
+    }
+    if (backgroundFadeTimer) clearTimeout(backgroundFadeTimer);
+    if (nextBackgroundObjectUrl) URL.revokeObjectURL(nextBackgroundObjectUrl);
+    nextBackgroundObjectUrl = objectUrl;
+    nextBackground.style.backgroundImage = `url("${objectUrl}")`;
+    nextBackground.classList.add('has-image');
+    requestAnimationFrame(() => nextBackground.classList.add('is-visible'));
+    backgroundVersion = nextVersion;
+    displayedBackgroundSlot = slot;
+    backgroundFadeTimer = setTimeout(() => {
+      if (backgroundObjectUrl) URL.revokeObjectURL(backgroundObjectUrl);
+      backgroundObjectUrl = objectUrl;
+      nextBackgroundObjectUrl = undefined;
+      background.style.backgroundImage = `url("${objectUrl}")`;
+      nextBackground.classList.remove('is-visible', 'has-image');
+      nextBackground.style.backgroundImage = '';
+      backgroundFadeTimer = undefined;
+    }, 1_550);
+  } catch (error) {
+    if (objectUrl && objectUrl !== backgroundObjectUrl && objectUrl !== nextBackgroundObjectUrl) URL.revokeObjectURL(objectUrl);
+    throw error;
   } finally { backgroundLoading = false; }
 }
 
@@ -163,7 +194,7 @@ async function loadHome() {
     ].filter(Boolean);
     document.querySelector(`#forecast-${slot}-extra`).textContent = dailyExtras.join(' · ');
   });
-  setWeatherVisual(data.weather.visual);
+  setWeatherVisual(data.weather.visual, data.weather.wind);
   const calendarWindowHours = data.settings.calendarWindowHours ?? 12;
   document.querySelector('#calendar-window-title').textContent = `Next ${calendarWindowHours} Hours`;
   const upcomingEvents = upcomingWithinHours(data.events, calendarWindowHours);
