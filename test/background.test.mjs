@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { backgroundScheduleSlot, createBackgroundService, scenePrompt, US_LANDSCAPE_SCENES } from '../lib/background.mjs';
 
@@ -15,7 +15,9 @@ test('uses a broad U.S. scene catalog in the background prompt', () => {
 });
 
 test('generates once per scheduled background slot', async () => {
-  const directory = await mkdtemp(join(process.cwd(), 'data', 'test-background-'));
+  const dataDirectory = join(process.cwd(), 'data');
+  await mkdir(dataDirectory, { recursive: true });
+  const directory = await mkdtemp(join(dataDirectory, 'test-background-'));
   let calls = 0;
   const service = createBackgroundService({
     dataDirectory: directory,
