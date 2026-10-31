@@ -7,7 +7,7 @@ Home Chime is a local, Raspberry Pi-friendly family calendar display. It uses a 
 Requires Node.js 22 or later.
 
 ```powershell
-npm start
+node --env-file=.env server.mjs
 ```
 
 Open `http://localhost:4173`. Set `PORT` if the Pi needs a different local port.
@@ -38,6 +38,93 @@ HOME_CHIME_BACKGROUND_REFRESH_MINUTES=60
 
 If image generation is unavailable, the dashboard continues with its built-in gradient background.
 
-## Pi deployment direction
+## Raspberry Pi deployment
 
-Run `node server.mjs` as a `systemd` service on the Pi's local network, and configure Chromium kiosk mode to open `http://localhost:4173`.
+Home Chime requires Node.js 22 or later. Keep the `.env` file only on the Pi; it contains your admin password and any API keys and is intentionally excluded from Git.
+
+### Install the app on the Pi
+
+```bash
+cd ~
+git clone https://github.com/shzolly/home-chime.git
+cd home-chime
+npm install
+cp .env.example .env
+nano .env
+chmod 600 .env
+```
+
+Enter `HOME_CHIME_ADMIN_PASSWORD` in `.env`, plus `OPENAI_API_KEY` if you want generated backgrounds. Save Nano with `Ctrl+O`, press `Enter`, then exit with `Ctrl+X`.
+
+### Run manually in a terminal
+
+Use this for a first test or when you are making changes:
+
+```bash
+cd ~/home-chime
+npm test
+node --env-file=.env server.mjs
+```
+
+Open `http://localhost:4173` on the Pi. To manage Home Chime from another device on the same home network, find the Pi address with `hostname -I` and open `http://<pi-address>:4173/admin`.
+
+Stop a manual run with `Ctrl+C`.
+
+### Run automatically as a service
+
+Create the service definition:
+
+```bash
+sudo nano /etc/systemd/system/home-chime.service
+```
+
+Paste the following. If your Pi user or project directory is different, replace `pi` and `/home/pi/home-chime` with the correct values. The Node.js path below is correct for a standard NodeSource installation; confirm it with `which node` if needed.
+
+```ini
+[Unit]
+Description=Home Chime Dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/home-chime
+EnvironmentFile=/home/pi/home-chime/.env
+ExecStart=/usr/bin/node /home/pi/home-chime/server.mjs
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Save with `Ctrl+O`, press `Enter`, then exit with `Ctrl+X`. Enable the service and start it immediately:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now home-chime
+sudo systemctl status home-chime
+```
+
+`active (running)` confirms it is working. Home Chime will now start automatically whenever the Pi starts.
+
+Useful service commands:
+
+```bash
+sudo systemctl restart home-chime
+sudo systemctl stop home-chime
+sudo systemctl status home-chime
+journalctl -u home-chime -f
+```
+
+### Deploy a later update
+
+```bash
+cd ~/home-chime
+git pull
+npm install
+sudo systemctl restart home-chime
+```
+
+For the dedicated monitor, configure Chromium kiosk mode to open `http://localhost:4173` after desktop auto-login.
