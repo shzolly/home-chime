@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="night" x1="8" y1="6" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#294d7d"/>
+      <stop offset="1" stop-color="#111a2d"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="0" cy="0" r="1" gradientTransform="translate(27 21) rotate(48) scale(25)">
+      <stop stop-color="#fff9d4"/>
+      <stop offset="1" stop-color="#f0bd48"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#night)"/>
+  <circle cx="27" cy="23" r="13" fill="url(#moon)"/>
+  <circle cx="33" cy="18" r="13" fill="#294d7d"/>
+  <path d="M17 41c0-6.1 4.9-11 11-11 4.3 0 8 2.4 9.9 6 1-.4 2.1-.6 3.1-.6 4.7 0 8.5 3.8 8.5 8.5S45.7 52.5 41 52.5H26.4C21.2 52.5 17 48.3 17 43.1Z" fill="#eef5ff"/>
+  <circle cx="49" cy="16" r="2" fill="#fff2a3"/>
+</svg>
