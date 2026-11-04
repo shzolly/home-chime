@@ -185,6 +185,7 @@ async function loadHome() {
   const forecastSlots = ['today', 'tomorrow', 'after'];
   forecastSlots.forEach((slot, index) => {
     const forecast = data.weather.forecast?.[index];
+    document.querySelector(`#forecast-${slot}-label`).textContent = index === 0 ? 'TODAY' : (forecast?.weekday?.toUpperCase() ?? 'FORECAST');
     document.querySelector(`#forecast-${slot}-condition`).textContent = forecast?.condition ?? 'Forecast unavailable';
     const precipitation = precipitationDisplay(forecast);
     document.querySelector(`#forecast-${slot}-detail`).innerHTML = forecast ? `${forecast.high}° / ${forecast.low}°${precipitation ? ` · ${precipitation}` : ''}` : '';

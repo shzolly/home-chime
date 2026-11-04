@@ -27,3 +27,19 @@ test('expands a weekly event to its next upcoming occurrence', () => {
   assert.equal(events.length, 1);
   assert.equal(events[0].startsAt, '2026-10-25T18:00:00.000Z');
 });
+
+test('keeps a weekly event at the same New York clock time after daylight saving time ends', () => {
+  const events = expandRecurringEvents([
+    {
+      id: 12,
+      title: 'Bailey Basketball practice',
+      startsAt: '2026-10-29T23:15:00.000Z',
+      endsAt: '2026-10-30T00:30:00.000Z',
+      recurrence: 'weekly'
+    }
+  ], { now: new Date('2026-11-03T17:00:00.000Z') });
+
+  assert.equal(events[0].startsAt, '2026-11-06T00:15:00.000Z');
+  assert.equal(events[0].endsAt, '2026-11-06T01:30:00.000Z');
+  assert.equal(toDashboardEvents(events, { now: new Date('2026-11-03T17:00:00.000Z') })[0].time, '7:15 PM');
+});
