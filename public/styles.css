@@ -369,17 +369,14 @@ body[data-windy="true"] .scene-wind { opacity:.52; animation:scene-wind-drift 6s
   }
 
   .weather-stage {
-    position:relative;
-    grid-column:2;
-    grid-row:1;
-    justify-self:center;
-    align-self:start;
-    width:clamp(12.5rem,16vw,19rem);
-    height:clamp(12.5rem,16vw,19rem);
-    top:auto;
-    left:auto;
+    position:absolute;
+    z-index:3;
+    width:clamp(9.5rem,13vw,14rem);
+    height:clamp(9.5rem,13vw,14rem);
+    top:clamp(-6.2rem,-8vh,-4rem);
+    left:clamp(10rem,17vw,17rem);
     right:auto;
-    margin-top:0;
+    margin:0;
   }
 
   .weather-copy {
