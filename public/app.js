@@ -90,9 +90,10 @@ function renderCalendar(events) {
   }).join('');
 }
 
-function setWeatherVisual(visual, wind) {
+function setWeatherVisual(visual, wind, isDay) {
   document.body.dataset.weather = visual ?? 'partly-cloudy';
   document.body.dataset.windy = Number(wind) >= 14 ? 'true' : 'false';
+  document.body.dataset.isDay = Number(isDay) === 1 ? 'true' : 'false';
 }
 
 function precipitationDisplay(forecast) {
@@ -195,7 +196,7 @@ async function loadHome() {
     ].filter(Boolean);
     document.querySelector(`#forecast-${slot}-extra`).textContent = dailyExtras.join(' · ');
   });
-  setWeatherVisual(data.weather.visual, data.weather.wind);
+  setWeatherVisual(data.weather.visual, data.weather.wind, data.weather.isDay);
   const calendarWindowHours = data.settings.calendarWindowHours ?? 12;
   document.querySelector('#calendar-window-title').textContent = `Next ${calendarWindowHours} Hours`;
   const upcomingEvents = upcomingWithinHours(data.events, calendarWindowHours);

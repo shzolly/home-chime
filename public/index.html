@@ -33,17 +33,32 @@
           <p id="date" class="date"></p>
           </div>
           <section class="weather-summary motion-weather" aria-label="Current weather and three-day forecast">
-          <div class="weather-stage" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><div class="weather-orb"><span class="sun"></span><span class="cloud cloud-one"></span><span class="cloud cloud-two"></span><span class="rain-lines"></span></div></div>
           <div class="weather-copy">
-            <p class="eyebrow">NOW · <span id="weather-location">HOME</span></p>
-            <div class="temperature"><span id="temperature">--</span><small><span>°</span><span>F</span></small></div>
-            <p id="condition" class="condition">Loading weather</p>
-            <p id="weather-detail" class="weather-detail"></p>
-            <p id="weather-metrics" class="weather-metrics"></p>
-            <div class="forecast-strip" aria-label="Three-day forecast">
-              <div class="forecast-day"><span id="forecast-today-label" class="forecast-label">TODAY</span><strong id="forecast-today-condition">Loading forecast</strong><span id="forecast-today-detail"></span><span id="forecast-today-extra" class="forecast-extra"></span></div>
-              <div class="forecast-day"><span id="forecast-tomorrow-label" class="forecast-label">TOMORROW</span><strong id="forecast-tomorrow-condition">Loading forecast</strong><span id="forecast-tomorrow-detail"></span><span id="forecast-tomorrow-extra" class="forecast-extra"></span></div>
-              <div class="forecast-day"><span id="forecast-after-label" class="forecast-label">NEXT DAY</span><strong id="forecast-after-condition">Loading forecast</strong><span id="forecast-after-detail"></span><span id="forecast-after-extra" class="forecast-extra"></span></div>
+            <div class="weather-info">
+              <div class="weather-current">
+                <p class="eyebrow">NOW · <span id="weather-location">HOME</span></p>
+                <div class="temperature"><span id="temperature">--</span><small><span>°</span><span>F</span></small></div>
+                <p id="condition" class="condition">Loading weather</p>
+                <p id="weather-detail" class="weather-detail"></p>
+                <p id="weather-metrics" class="weather-metrics"></p>
+              </div>
+              <div class="forecast-strip" aria-label="Three-day forecast">
+                <div class="forecast-day"><span id="forecast-today-label" class="forecast-label">TODAY</span><strong id="forecast-today-condition">Loading forecast</strong><span id="forecast-today-detail"></span><span id="forecast-today-extra" class="forecast-extra"></span></div>
+                <div class="forecast-day"><span id="forecast-tomorrow-label" class="forecast-label">TOMORROW</span><strong id="forecast-tomorrow-condition">Loading forecast</strong><span id="forecast-tomorrow-detail"></span><span id="forecast-tomorrow-extra" class="forecast-extra"></span></div>
+                <div class="forecast-day"><span id="forecast-after-label" class="forecast-label">NEXT DAY</span><strong id="forecast-after-condition">Loading forecast</strong><span id="forecast-after-detail"></span><span id="forecast-after-extra" class="forecast-extra"></span></div>
+              </div>
+            </div>
+            <div class="weather-stage" aria-hidden="true">
+              <div class="weather-scene">
+                <img class="weather-element scene-sun" src="/assets/weather/sun-3d.png" alt="" />
+                <img class="weather-element scene-moon" src="/assets/weather/moon-full-3d.png" alt="" />
+                <img class="weather-element scene-cloud" src="/assets/weather/cloud-3d.png" alt="" />
+                <img class="weather-element scene-rain" src="/assets/weather/rain-3d.png" alt="" />
+                <img class="weather-element scene-snow" src="/assets/weather/snow-3d.png" alt="" />
+                <img class="weather-element scene-fog" src="/assets/weather/fog-3d.png" alt="" />
+                <img class="weather-element scene-lightning" src="/assets/weather/lightning-3d.png" alt="" />
+                <span class="scene-wind"></span>
+              </div>
             </div>
           </div>
           </section>

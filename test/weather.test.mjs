@@ -14,6 +14,7 @@ test('normalizes an Open-Meteo response for the dashboard', () => {
   assert.equal(weather.location, 'Princeton Junction');
   assert.equal(weather.temperature, 62);
   assert.equal(weather.visual, 'partly-cloudy');
+  assert.equal(weather.isDay, 1);
   assert.equal(weather.precipitation, 25);
   assert.equal(weather.humidity, 58);
   assert.deepEqual(weather.forecast[0], {
