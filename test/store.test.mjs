@@ -15,10 +15,9 @@ test('persists family members and settings', async () => {
     assert.equal(member.birthday, '03-03');
     assert.equal(store.listFamily().length, 1);
     assert.equal(store.updateFamily(member.id, { name: 'Colin', color: '#4f7cac', birthday: '06-18', active: true }).birthday, '06-18');
-    const settings = store.updateSettings({ weatherRefreshMinutes: 30, calendarWindowHours: 24, backgroundRefreshMinutes: 120, travelBufferMinutes: 10 });
+    const settings = store.updateSettings({ weatherRefreshMinutes: 30, calendarWindowHours: 24, travelBufferMinutes: 10 });
     assert.equal(settings.weatherRefreshMinutes, 30);
     assert.equal(settings.calendarWindowHours, 24);
-    assert.equal(settings.backgroundRefreshMinutes, 120);
     assert.equal(settings.travelBufferMinutes, 10);
     const event = store.addEvent({ familyMemberId: member.id, title: 'Piano lesson', startsAt: '2026-10-25T20:30:00.000Z', endsAt: '2026-10-25T21:30:00.000Z', reminderMinutes: 15 });
     assert.equal(event.memberName, 'Colin');

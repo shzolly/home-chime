@@ -28,18 +28,19 @@ test('generates once per scheduled background slot', async () => {
     }
   });
   try {
-    const first = await service.get({ now: new Date('2026-10-27T12:00:00.000Z') });
-    const second = await service.get({ now: new Date('2026-10-27T12:30:00.000Z') });
-    await service.get({ now: new Date('2026-10-27T13:00:00.000Z') });
+  const first = await service.get({ now: new Date('2026-10-27T12:00:00.000Z'), slot: '2026-10-27-sunrise' });
+  const second = await service.get({ now: new Date('2026-10-27T12:30:00.000Z'), slot: '2026-10-27-sunrise' });
+  await service.get({ now: new Date('2026-10-27T23:00:00.000Z'), slot: '2026-10-27-sunset' });
     assert.equal(first.image.toString(), 'webp-image');
     assert.equal(second.image.toString(), 'webp-image');
     assert.equal(calls, 2);
-    assert.equal((await service.status()).generatedAt, '2026-10-27T13:00:00.000Z');
+    assert.equal((await service.status()).generatedAt, '2026-10-27T23:00:00.000Z');
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
-test('aligns background slots to local clock boundaries', () => {
-  assert.equal(backgroundScheduleSlot(new Date('2026-10-27T13:00:00.000Z'), 60), backgroundScheduleSlot(new Date('2026-10-27T13:59:59.000Z'), 60));
-  assert.notEqual(backgroundScheduleSlot(new Date('2026-10-27T13:59:59.000Z'), 60), backgroundScheduleSlot(new Date('2026-10-27T14:00:00.000Z'), 60));
-  assert.notEqual(backgroundScheduleSlot(new Date('2026-10-27T13:00:00.000Z'), 120), backgroundScheduleSlot(new Date('2026-10-27T14:00:00.000Z'), 120));
+test('uses the current day’s sunrise and sunset as background slots', () => {
+  const solar = { sunrise: '2026-10-27T07:28', sunset: '2026-10-27T18:07' };
+  assert.equal(backgroundScheduleSlot(new Date('2026-10-27T10:00:00.000Z'), solar), '2026-10-26-sunset');
+  assert.equal(backgroundScheduleSlot(new Date('2026-10-27T12:30:00.000Z'), solar), '2026-10-27-sunrise');
+  assert.equal(backgroundScheduleSlot(new Date('2026-10-27T23:00:00.000Z'), solar), '2026-10-27-sunset');
 });

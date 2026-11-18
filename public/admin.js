@@ -142,7 +142,6 @@ async function loadAdmin() {
   renderEvents(events);
   document.querySelector('#weather-refresh').value = String(settings.weatherRefreshMinutes);
   document.querySelector('#calendar-window').value = String(settings.calendarWindowHours);
-  document.querySelector('#background-refresh').value = String(settings.backgroundRefreshMinutes);
   document.querySelector('#home-address').value = settings.homeAddress;
   document.querySelector('#travel-buffer').value = String(settings.travelBufferMinutes);
   setView('admin');
@@ -244,7 +243,7 @@ document.querySelector('#settings-form').addEventListener('submit', async (event
   event.preventDefault();
   const message = document.querySelector('#settings-message');
   try {
-    await request('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ weatherRefreshMinutes: Number(document.querySelector('#weather-refresh').value), calendarWindowHours: Number(document.querySelector('#calendar-window').value), backgroundRefreshMinutes: Number(document.querySelector('#background-refresh').value), homeAddress: document.querySelector('#home-address').value, travelBufferMinutes: Number(document.querySelector('#travel-buffer').value) }) });
+    await request('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ weatherRefreshMinutes: Number(document.querySelector('#weather-refresh').value), calendarWindowHours: Number(document.querySelector('#calendar-window').value), homeAddress: document.querySelector('#home-address').value, travelBufferMinutes: Number(document.querySelector('#travel-buffer').value) }) });
     message.textContent = 'Dashboard settings saved.';
   } catch (error) { message.textContent = error.message; }
 });

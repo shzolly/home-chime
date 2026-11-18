@@ -18,7 +18,6 @@ const adminPassword = process.env.HOME_CHIME_ADMIN_PASSWORD;
 const sessions = new Map();
 const store = await createStore();
 const calendarWindowOptions = new Set([4, 8, 12, 24]);
-const backgroundRefreshOptions = new Set([5, 10, 20, 30, 60, 120, 240, 720, 1_440]);
 
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',
@@ -93,10 +92,6 @@ function validateSettings(input) {
   if ('calendarWindowHours' in input) {
     if (!calendarWindowOptions.has(input.calendarWindowHours)) throw new Error('Calendar window must be 4, 8, 12, or 24 hours.');
     output.calendarWindowHours = input.calendarWindowHours;
-  }
-  if ('backgroundRefreshMinutes' in input) {
-    if (!backgroundRefreshOptions.has(input.backgroundRefreshMinutes)) throw new Error('Background refresh interval is invalid.');
-    output.backgroundRefreshMinutes = input.backgroundRefreshMinutes;
   }
   if ('temperatureUnit' in input) {
     if (!['fahrenheit', 'celsius'].includes(input.temperatureUnit)) throw new Error('Temperature unit is invalid.');
@@ -181,12 +176,11 @@ async function refreshApproachingTravel(events, settings, now) {
 
 async function refreshDashboardBackground() {
   const now = new Date();
-  const settings = store.getSettings();
   let weather;
   try { weather = await getWeather(); } catch { /* The scene can still render when weather is briefly unavailable. */ }
   return getDashboardBackground({
     now,
-    slot: backgroundScheduleSlot(now, settings.backgroundRefreshMinutes),
+    slot: backgroundScheduleSlot(now, weather),
     context: { weather, occasion: getOccasion({ now, members: store.listFamily() }) }
   });
 }
@@ -335,11 +329,12 @@ const server = createServer(async (request, response) => {
 
   if (method === 'GET' && requestUrl.pathname === '/api/background/status') {
     const now = new Date();
-    const settings = store.getSettings();
+    let weather;
+    try { weather = await getWeather(); } catch { /* A fallback slot keeps the existing background available. */ }
     return sendJson(response, 200, {
       background: await getDashboardBackgroundStatus(),
-      slot: backgroundScheduleSlot(now, settings.backgroundRefreshMinutes),
-      refreshMinutes: settings.backgroundRefreshMinutes
+      slot: backgroundScheduleSlot(now, weather),
+      schedule: 'sunrise-sunset'
     });
   }
 
