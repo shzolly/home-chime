@@ -22,6 +22,20 @@ Weather comes directly from [Open-Meteo](https://open-meteo.com/) for Princeton 
 
 The dashboard refreshes the schedule every minute. Reminder checks run every 30 seconds and use the browser's text-to-speech voice as a development placeholder.
 
+## Vivid day and night themes
+
+The dashboard switches palettes at the local sunrise and sunset times that Open-Meteo publishes, so the look follows the season instead of a fixed hour. Daylight hours use a vivid azure-to-teal scene with a warm golden glow; after sunset the wall moves to deep indigo, violet, and neon cyan. Both palettes crossfade over about two seconds, and slow drifting light fields keep the screen from looking frozen.
+
+The server owns that decision and serves it at `GET /api/theme` with a short build fingerprint. The kiosk polls the endpoint once a minute, so the palette changes on its own even after weeks of uptime. When a deploy changes the fingerprint, the page reloads once so new HTML, CSS, and JavaScript are picked up without anyone touching the Pi.
+
+To preview either palette without waiting for the sun:
+
+```bash
+HOME_CHIME_THEME_PHASE=day node --env-file=.env server.mjs
+```
+
+Use `night` for the other palette, and leave the variable unset for normal operation.
+
 ## Sunrise and sunset generated backgrounds
 
 If `OPENAI_API_KEY` is present, Home Chime requests one low-quality WebP image from the OpenAI Images API at the local sunrise and sunset times supplied by Open-Meteo. The prompt blends the local time, current Open-Meteo conditions, a rotating color direction, major U.S. and Chinese holidays, and any birthday saved in Admin. The display adds a subtle browser animation over the generated scene; the Images API itself returns a static WebP rather than a GIF. It keeps the image at `data/dashboard-background.webp` and reuses it until the next sunrise or sunset. The API key never reaches the browser.
@@ -125,5 +139,19 @@ git pull
 npm install
 sudo systemctl restart home-chime
 ```
+
+### Update automatically from GitHub
+
+Instead of pulling by hand, install the bundled systemd timer. It checks GitHub every 15 minutes, fast-forwards the checkout when there are new commits, and restarts the service. The wall display reloads itself within a minute because the build fingerprint changed.
+
+```bash
+cd ~/home-chime
+sudo cp deploy/home-chime-update.service deploy/home-chime-update.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now home-chime-update.timer
+systemctl list-timers home-chime-update.timer
+```
+
+If your Pi user or checkout differ from the defaults, edit `HOME_CHIME_APP_DIR`, `HOME_CHIME_APP_USER`, and `HOME_CHIME_SERVICE` in `/etc/systemd/system/home-chime-update.service`. The updater refuses to run when tracked files have local edits, so hand tuning on the Pi is never overwritten. Follow its output with `journalctl -u home-chime-update.service`.
 
 For the dedicated monitor, configure Chromium kiosk mode to open `http://localhost:4173` after desktop auto-login.

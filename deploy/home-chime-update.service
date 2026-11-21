@@ -1,0 +1,11 @@
+[Unit]
+Description=Pull the latest Home Chime code and restart the dashboard
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment=HOME_CHIME_APP_DIR=/home/pi/home-chime
+Environment=HOME_CHIME_APP_USER=pi
+Environment=HOME_CHIME_SERVICE=home-chime
+ExecStart=/bin/bash /home/pi/home-chime/scripts/update.sh

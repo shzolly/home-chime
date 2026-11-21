@@ -9,14 +9,18 @@ import { getDriveTime } from './lib/travel.mjs';
 import { selectDueReminders } from './lib/reminders.mjs';
 import { createStore } from './lib/store.mjs';
 import { getOccasion } from './lib/occasion.mjs';
+import { themeSchedule } from './lib/theme.mjs';
+import { computeBuildId } from './lib/version.mjs';
 import { getWeather } from './lib/weather.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.env.PORT ?? 4173);
 const publicDirectory = join(root, 'public');
 const adminPassword = process.env.HOME_CHIME_ADMIN_PASSWORD;
+const forcedThemePhase = ['day', 'night'].includes(process.env.HOME_CHIME_THEME_PHASE) ? process.env.HOME_CHIME_THEME_PHASE : undefined;
 const sessions = new Map();
 const store = await createStore();
+const buildId = await computeBuildId(root);
 const calendarWindowOptions = new Set([4, 8, 12, 24]);
 
 const mimeTypes = {
@@ -30,6 +34,13 @@ const mimeTypes = {
 function sendJson(response, status, body, headers = {}) {
   response.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers });
   response.end(JSON.stringify(body));
+}
+
+// HOME_CHIME_THEME_PHASE=day|night pins a palette so the theme can be previewed
+// without waiting for sunrise or sunset. It never changes the stored schedule.
+function themeFor(now, weather) {
+  const theme = themeSchedule(now, weather);
+  return forcedThemePhase ? { ...theme, phase: forcedThemePhase, forced: true } : theme;
 }
 
 async function parseJson(request) {
@@ -316,12 +327,20 @@ const server = createServer(async (request, response) => {
     }
   }
 
+  if (method === 'GET' && requestUrl.pathname === '/api/theme') {
+    const now = new Date();
+    let weather;
+    try { weather = await getWeather(); } catch { /* The clock fallback keeps the palette switching twice a day. */ }
+    return sendJson(response, 200, { theme: themeFor(now, weather), build: buildId, now: now.toISOString() });
+  }
+
   if (method === 'GET' && requestUrl.pathname === '/api/home') {
     try {
       const settings = store.getSettings();
       const now = new Date();
+      const weather = await getWeather({ refreshAfter: settings.weatherRefreshMinutes * 60 * 1000 });
       const events = toDashboardEvents(applyReminderBuffer(expandRecurringEvents(store.listEvents(), { now }), settings).slice(0, 16), { now });
-      return sendJson(response, 200, { weather: await getWeather({ refreshAfter: settings.weatherRefreshMinutes * 60 * 1000 }), events, settings, now: now.toISOString() });
+      return sendJson(response, 200, { weather, events, settings, now: now.toISOString(), theme: themeFor(now, weather), build: buildId });
     } catch {
       return sendJson(response, 503, { error: 'Weather is temporarily unavailable.' });
     }

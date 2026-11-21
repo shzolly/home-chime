@@ -11,6 +11,34 @@ let backgroundObjectUrl;
 let nextBackgroundObjectUrl;
 let backgroundFadeTimer;
 let backgroundLoading = false;
+let dashboardBuild;
+let themeReloading = false;
+
+function applyTheme(theme) {
+  if (!theme?.phase) return;
+  const root = document.documentElement;
+  if (root.dataset.theme === theme.phase) return;
+  root.dataset.theme = theme.phase;
+  root.dataset.themeChange = theme.next?.event ?? '';
+}
+
+// The server decides whether the sun is up. Polling every minute switches the
+// palette at sunrise and sunset, and a changed build fingerprint (a deploy that
+// restarted the service) reloads the kiosk so it picks up new HTML, CSS and JS.
+async function syncTheme() {
+  try {
+    const response = await fetch('/api/theme', { cache: 'no-store' });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!themeReloading && dashboardBuild && data.build && data.build !== dashboardBuild) {
+      themeReloading = true;
+      window.location.reload();
+      return;
+    }
+    dashboardBuild ??= data.build;
+    applyTheme(data.theme);
+  } catch { /* Keep the current palette while the local server restarts. */ }
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]);
@@ -130,6 +158,7 @@ async function loadBackground(force = false, slot) {
       backgroundObjectUrl = objectUrl;
       background.style.backgroundImage = `url("${objectUrl}")`;
       background.classList.add('has-image');
+      document.body.classList.add('has-background');
       backgroundVersion = nextVersion;
       displayedBackgroundSlot = slot;
       return;
@@ -170,6 +199,7 @@ async function loadHome() {
   const response = await fetch('/api/home');
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'Weather is unavailable.');
+  applyTheme(data.theme);
   document.querySelector('#weather-location').textContent = data.weather.location.toUpperCase();
   document.querySelector('#temperature').textContent = data.weather.temperature;
   const condition = document.querySelector('#condition');
@@ -214,6 +244,8 @@ updateClock();
 startHomeMotion();
 loadHome().catch((error) => { statusLabel.textContent = error.message; });
 syncBackground();
+syncTheme();
 setInterval(() => { updateClock(); updateReminderIndicators(); }, 1_000);
 setInterval(() => loadHome().catch(() => {}), 60_000);
 setInterval(syncBackground, 60_000);
+setInterval(syncTheme, 60_000);

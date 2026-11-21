@@ -1,19 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="night">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#111a2d" />
+    <meta name="theme-color" content="#07021c" />
     <title>Home Chime</title>
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/theme.css" />
     <link rel="stylesheet" href="/clock.css" />
     <link rel="stylesheet" href="/home-motion.css" />
+    <script>
+      // Paint the closest palette before the first frame; the server's real
+      // sunrise/sunset phase arrives moments later from /api/theme.
+      document.documentElement.dataset.theme = new Date().getHours() >= 7 && new Date().getHours() < 19 ? 'day' : 'night';
+    </script>
   </head>
   <body>
     <main class="app-shell" aria-live="polite">
       <div id="generated-background" class="generated-background" aria-hidden="true"></div>
       <div id="generated-background-next" class="generated-background generated-background-next" aria-hidden="true"></div>
+      <div class="theme-wash" aria-hidden="true"><div class="wash-layer wash-day"></div><div class="wash-layer wash-night"></div></div>
+      <div class="aurora" aria-hidden="true"><div class="aurora-layer aurora-day"><span></span><span></span><span></span></div><div class="aurora-layer aurora-night"><span></span><span></span><span></span></div></div>
       <div class="atmosphere" aria-hidden="true"><span class="atmosphere-glow"></span><span class="atmosphere-star star-one"></span><span class="atmosphere-star star-two"></span><span class="atmosphere-star star-three"></span></div>
       <div class="weather-ambience" aria-hidden="true"><span class="ambient-cloud ambient-cloud-one"></span><span class="ambient-cloud ambient-cloud-two"></span><span class="ambient-rain"></span><span class="ambient-snow"></span><span class="ambient-mist"></span></div>
       <header class="topbar motion-header">

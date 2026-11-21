@@ -1,0 +1,404 @@
+/* Home Chime wall-dashboard palette.
+   Two vivid scenes crossfade at the local sunrise and sunset times from
+   Open-Meteo: "day" while the sun is up and "night" after it sets. Every colour
+   the dashboard paints comes from the tokens below, so the whole surface shifts
+   together instead of only the backdrop. */
+
+[data-theme="day"] {
+  color-scheme: light dark;
+  --text: #ffffff;
+  --text-soft: rgba(255, 255, 255, .93);
+  --text-muted: rgba(233, 245, 255, .8);
+  --accent: #ffe066;
+  --accent-2: #ff8a5b;
+  --status-dot: #38f0b4;
+  --divider: rgba(255, 255, 255, .3);
+  --panel-bg: rgba(9, 32, 70, .4);
+  --panel-bg-desktop: rgba(8, 30, 66, .3);
+  --panel-border: rgba(255, 255, 255, .4);
+  --panel-shadow: 0 34px 90px rgba(4, 16, 46, .42), inset 0 1px 0 rgba(255, 255, 255, .34);
+  --bg-base: linear-gradient(166deg, #0b3f9e 0%, #1470e0 28%, #0aa3c4 60%, #0a6f8e 82%, #043350 100%);
+  --clock-glow: rgba(255, 214, 120, .55);
+  --glow-1: radial-gradient(circle, rgba(255, 214, 120, .58), rgba(255, 150, 90, .2) 36%, transparent 68%);
+  --glow-2: radial-gradient(circle, rgba(120, 220, 255, .38), transparent 66%);
+  --time-shadow: 0 2px 22px rgba(2, 8, 24, .3), 0 26px 80px rgba(2, 8, 24, .4), 0 0 120px var(--clock-glow);
+}
+
+[data-theme="night"] {
+  color-scheme: dark;
+  --text: #fdfbff;
+  --text-soft: rgba(240, 238, 255, .92);
+  --text-muted: rgba(208, 205, 240, .78);
+  --accent: #ffd166;
+  --accent-2: #67e8f9;
+  --status-dot: #67e8f9;
+  --divider: rgba(216, 222, 255, .24);
+  --panel-bg: rgba(10, 6, 34, .56);
+  --panel-bg-desktop: rgba(8, 5, 28, .44);
+  --panel-border: rgba(186, 176, 255, .34);
+  --panel-shadow: 0 34px 100px rgba(1, 2, 12, .72), inset 0 1px 0 rgba(200, 190, 255, .16);
+  --bg-base: linear-gradient(166deg, #0d0430 0%, #230a5e 34%, #3b0f7a 58%, #141b4d 82%, #03061a 100%);
+  --clock-glow: rgba(150, 120, 255, .55);
+  --glow-1: radial-gradient(circle, rgba(168, 85, 247, .42), rgba(88, 28, 135, .18) 40%, transparent 70%);
+  --glow-2: radial-gradient(circle, rgba(34, 211, 238, .32), transparent 66%);
+  --time-shadow: 0 2px 22px rgba(1, 2, 14, .45), 0 26px 90px rgba(1, 2, 14, .55), 0 0 130px var(--clock-glow);
+}
+
+[data-theme] body {
+  background: var(--bg-base);
+}
+
+/* Colour grade above the generated photograph, below the dashboard UI. */
+.theme-wash {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+}
+
+.wash-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--motion-theme, 1800ms) cubic-bezier(.4, 0, .2, 1);
+}
+
+.wash-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.wash-day {
+  background:
+    radial-gradient(68% 52% at 8% -6%, rgba(255, 201, 84, .5) 0%, rgba(255, 150, 70, .16) 42%, transparent 66%),
+    radial-gradient(58% 46% at 97% -4%, rgba(255, 96, 120, .32) 0%, transparent 60%),
+    linear-gradient(148deg, rgba(30, 110, 235, .16) 0%, rgba(6, 60, 110, .26) 52%, rgba(2, 26, 52, .48) 100%);
+}
+
+.wash-day::after {
+  background:
+    radial-gradient(58% 46% at 10% 100%, rgba(3, 16, 42, .5), transparent 72%),
+    radial-gradient(132% 104% at 50% 44%, transparent 44%, rgba(4, 20, 48, .48) 100%),
+    linear-gradient(180deg, rgba(4, 18, 44, .32) 0%, transparent 22%, transparent 62%, rgba(4, 18, 44, .42) 100%);
+}
+
+.wash-night {
+  background:
+    radial-gradient(62% 52% at 92% -6%, rgba(168, 85, 247, .48) 0%, rgba(120, 40, 200, .2) 42%, transparent 66%),
+    radial-gradient(55% 50% at 4% 100%, rgba(34, 211, 238, .36) 0%, transparent 62%),
+    linear-gradient(152deg, rgba(50, 18, 110, .26) 0%, rgba(8, 4, 30, .4) 55%, rgba(1, 2, 12, .6) 100%);
+}
+
+.wash-night::after {
+  background:
+    radial-gradient(58% 46% at 10% 100%, rgba(1, 3, 14, .58), transparent 72%),
+    radial-gradient(132% 104% at 50% 42%, transparent 40%, rgba(1, 3, 16, .6) 100%),
+    linear-gradient(180deg, rgba(2, 4, 18, .42) 0%, transparent 26%, transparent 58%, rgba(1, 3, 12, .56) 100%);
+}
+
+[data-theme="day"] .wash-day,
+[data-theme="night"] .wash-night {
+  opacity: 1;
+}
+
+/* A generated photograph is colour-graded harder than the plain gradient so the
+   dashboard keeps one vivid palette whether or not an image is present. */
+[data-theme] .generated-background {
+  filter: saturate(1.35) contrast(1.05) brightness(.9);
+}
+
+body.has-background .wash-day {
+  background:
+    radial-gradient(70% 54% at 8% -6%, rgba(255, 170, 60, .44) 0%, rgba(255, 120, 60, .14) 44%, transparent 68%),
+    radial-gradient(60% 50% at 96% -4%, rgba(255, 80, 120, .34) 0%, transparent 60%),
+    linear-gradient(155deg, rgba(20, 90, 220, .42) 0%, rgba(6, 60, 120, .46) 48%, rgba(2, 26, 52, .64) 100%);
+}
+
+body.has-background .wash-night {
+  background:
+    radial-gradient(64% 54% at 92% -6%, rgba(150, 60, 255, .56) 0%, rgba(120, 30, 200, .28) 44%, transparent 68%),
+    radial-gradient(56% 52% at 4% 100%, rgba(20, 190, 230, .44) 0%, transparent 64%),
+    linear-gradient(152deg, rgba(60, 20, 130, .4) 0%, rgba(8, 4, 30, .52) 55%, rgba(1, 2, 12, .72) 100%);
+}
+
+/* Slow luminous fields. They keep the wall display alive without pulling
+   attention away from the clock, weather, and schedule. */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--motion-theme, 1800ms) cubic-bezier(.4, 0, .2, 1);
+}
+
+[data-theme="day"] .aurora-day,
+[data-theme="night"] .aurora-night {
+  opacity: 1;
+}
+
+.aurora-layer span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(70px);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.aurora-day span:nth-child(1) {
+  width: 48vw;
+  height: 48vw;
+  left: -6%;
+  top: -12%;
+  background: radial-gradient(circle, rgba(255, 190, 60, .92), rgba(255, 160, 70, .3) 46%, transparent 66%);
+  animation: aurora-a 30s ease-in-out infinite alternate;
+}
+
+.aurora-day span:nth-child(2) {
+  width: 42vw;
+  height: 42vw;
+  right: -8%;
+  top: 0;
+  background: radial-gradient(circle, rgba(255, 90, 125, .62), transparent 66%);
+  animation: aurora-b 38s ease-in-out infinite alternate;
+}
+
+.aurora-day span:nth-child(3) {
+  width: 58vw;
+  height: 42vw;
+  left: 18%;
+  bottom: -22%;
+  background: radial-gradient(circle, rgba(60, 215, 255, .5), transparent 68%);
+  animation: aurora-c 44s ease-in-out infinite alternate;
+}
+
+.aurora-night span:nth-child(1) {
+  width: 48vw;
+  height: 48vw;
+  left: -8%;
+  top: -16%;
+  background: radial-gradient(circle, rgba(139, 92, 246, .72), transparent 64%);
+  animation: aurora-a 34s ease-in-out infinite alternate;
+}
+
+.aurora-night span:nth-child(2) {
+  width: 40vw;
+  height: 40vw;
+  right: -7%;
+  top: 6%;
+  background: radial-gradient(circle, rgba(236, 72, 153, .62), transparent 66%);
+  animation: aurora-b 40s ease-in-out infinite alternate;
+}
+
+.aurora-night span:nth-child(3) {
+  width: 54vw;
+  height: 40vw;
+  left: 20%;
+  bottom: -20%;
+  background: radial-gradient(circle, rgba(34, 211, 238, .55), transparent 68%);
+  animation: aurora-c 48s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-a {
+  from { transform: translate3d(-3%, -2%, 0) scale(1); }
+  to { transform: translate3d(7%, 5%, 0) scale(1.14); }
+}
+
+@keyframes aurora-b {
+  from { transform: translate3d(2%, -3%, 0) scale(1.06); }
+  to { transform: translate3d(-7%, 6%, 0) scale(.92); }
+}
+
+@keyframes aurora-c {
+  from { transform: translate3d(-4%, 3%, 0) scale(.94); }
+  to { transform: translate3d(6%, -6%, 0) scale(1.12); }
+}
+
+/* Ambient glow behind the clock and the calendar. */
+[data-theme] .atmosphere-glow {
+  background: var(--glow-1);
+}
+
+[data-theme] .atmosphere::after {
+  content: "";
+  position: absolute;
+  width: min(52vw, 48rem);
+  aspect-ratio: 1;
+  bottom: -26rem;
+  left: -12rem;
+  border-radius: 50%;
+  background: var(--glow-2);
+  filter: blur(8px);
+  opacity: .85;
+}
+
+[data-theme="day"] .atmosphere-star {
+  opacity: 0;
+  transition: opacity var(--motion-theme, 1800ms) ease;
+}
+
+/* Clock and date: the brightest information on the wall. */
+[data-theme] .time {
+  color: var(--text);
+  text-shadow: var(--time-shadow);
+}
+
+[data-theme] .date {
+  color: var(--text);
+  text-shadow: 0 2px 18px rgba(2, 8, 24, .4);
+}
+
+[data-theme] .clock-context {
+  color: var(--accent);
+  text-shadow: 0 1px 14px rgba(2, 8, 24, .35);
+}
+
+[data-theme] .brand-mark {
+  color: var(--accent);
+  text-shadow: 0 0 22px rgba(255, 209, 102, .55);
+}
+
+[data-theme] .status {
+  color: var(--text-soft);
+}
+
+[data-theme] .status-dot {
+  background: var(--status-dot);
+  box-shadow: 0 0 16px var(--status-dot);
+}
+
+/* Weather block. */
+[data-theme] .temperature {
+  color: var(--text);
+  text-shadow: 0 2px 26px rgba(2, 8, 24, .35);
+}
+
+[data-theme] .condition {
+  color: var(--text);
+  text-shadow: 0 1px 3px rgba(2, 8, 22, .6), 0 6px 22px rgba(2, 8, 22, .5);
+}
+
+/* A soft shadow keeps the weather copy legible over bright photographs without
+   turning the top-left corner into a visible box. */
+[data-theme] .weather-info {
+  position: relative;
+}
+
+[data-theme] .weather-info::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -12% -14% -14% -10%;
+  border-radius: 40% 34% 36% 34%;
+  background: radial-gradient(58% 66% at 32% 46%, rgba(2, 9, 26, .44), rgba(2, 9, 26, .16) 62%, transparent 80%);
+  pointer-events: none;
+}
+
+[data-theme] .condition,
+[data-theme] .weather-detail,
+[data-theme] .weather-metrics {
+  text-shadow: 0 1px 3px rgba(2, 8, 22, .55), 0 6px 22px rgba(2, 8, 22, .45);
+}
+
+[data-theme] .weather-detail,
+[data-theme] .weather-metrics {
+  color: var(--text-soft);
+}
+
+[data-theme] .eyebrow {
+  color: var(--text-muted);
+}
+
+[data-theme] .forecast-strip {
+  border-top-color: var(--divider);
+}
+
+[data-theme] .forecast-day + .forecast-day {
+  border-left-color: var(--divider);
+}
+
+[data-theme] .forecast-day {
+  color: var(--text-soft);
+}
+
+[data-theme] .forecast-label,
+[data-theme] .calendar-count,
+[data-theme] .event-time {
+  color: var(--accent);
+}
+
+[data-theme] .forecast-day span:last-child,
+[data-theme] .event-copy span,
+[data-theme] .calendar-day,
+[data-theme] .calendar-empty {
+  color: var(--text-muted);
+}
+
+[data-theme] .forecast-extra {
+  color: var(--text-muted);
+}
+
+/* Frosted calendar glass, tinted by the current palette. */
+[data-theme] .calendar-panel {
+  background: var(--panel-bg);
+  border-color: var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  transition: background-color var(--motion-theme, 1800ms) ease,
+    border-color var(--motion-theme, 1800ms) ease,
+    box-shadow var(--motion-theme, 1800ms) ease;
+}
+
+@media (min-width: 901px) {
+  [data-theme] .calendar-panel {
+    background: var(--panel-bg-desktop);
+  }
+}
+
+[data-theme] .calendar-heading {
+  border-bottom-color: var(--divider);
+}
+
+[data-theme] .calendar-heading h2 {
+  color: var(--text);
+}
+
+[data-theme] .event-copy strong {
+  color: var(--text);
+}
+
+[data-theme] .calendar-event {
+  color: var(--text);
+}
+
+[data-theme="day"] .calendar-event.is-reminder-due {
+  background: linear-gradient(100deg, rgba(255, 196, 80, .55), rgba(255, 116, 87, .3));
+  border-color: rgba(255, 238, 170, .95);
+}
+
+[data-theme] .event-copy span,
+[data-theme] .calendar-day,
+[data-theme] .forecast-day span:last-child,
+[data-theme] .weather-detail,
+[data-theme] .weather-metrics,
+[data-theme] .status {
+  transition: color var(--motion-theme, 1800ms) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-layer span {
+    animation: none !important;
+  }
+
+  .wash-layer,
+  .aurora-layer {
+    transition: none !important;
+  }
+}
