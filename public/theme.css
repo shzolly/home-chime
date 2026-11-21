@@ -6,42 +6,42 @@
 
 [data-theme="day"] {
   color-scheme: light dark;
-  --text: #ffffff;
-  --text-soft: rgba(255, 255, 255, .93);
-  --text-muted: rgba(233, 245, 255, .8);
-  --accent: #ffe066;
-  --accent-2: #ff8a5b;
-  --status-dot: #38f0b4;
-  --divider: rgba(255, 255, 255, .3);
-  --panel-bg: rgba(9, 32, 70, .4);
-  --panel-bg-desktop: rgba(8, 30, 66, .3);
-  --panel-border: rgba(255, 255, 255, .4);
-  --panel-shadow: 0 34px 90px rgba(4, 16, 46, .42), inset 0 1px 0 rgba(255, 255, 255, .34);
-  --bg-base: linear-gradient(166deg, #0b3f9e 0%, #1470e0 28%, #0aa3c4 60%, #0a6f8e 82%, #043350 100%);
-  --clock-glow: rgba(255, 214, 120, .55);
-  --glow-1: radial-gradient(circle, rgba(255, 214, 120, .58), rgba(255, 150, 90, .2) 36%, transparent 68%);
-  --glow-2: radial-gradient(circle, rgba(120, 220, 255, .38), transparent 66%);
-  --time-shadow: 0 2px 22px rgba(2, 8, 24, .3), 0 26px 80px rgba(2, 8, 24, .4), 0 0 120px var(--clock-glow);
+  --text: #fffaf0;
+  --text-soft: rgba(255, 244, 220, .95);
+  --text-muted: rgba(255, 234, 200, .84);
+  --accent: #ffb020;
+  --accent-2: #ff6b4a;
+  --status-dot: #58e5a4;
+  --divider: rgba(255, 232, 186, .4);
+  --panel-bg: rgba(6, 36, 64, .46);
+  --panel-bg-desktop: rgba(6, 32, 60, .38);
+  --panel-border: rgba(255, 206, 128, .55);
+  --panel-shadow: 0 34px 90px rgba(16, 8, 0, .46), inset 0 1px 0 rgba(255, 232, 186, .4);
+  --bg-base: linear-gradient(166deg, #0a55c8 0%, #1b8de8 26%, #1cc7d9 58%, #0b86a8 82%, #05395c 100%);
+  --clock-glow: rgba(255, 190, 80, .62);
+  --glow-1: radial-gradient(circle, rgba(255, 190, 80, .6), rgba(255, 130, 70, .22) 36%, transparent 68%);
+  --glow-2: radial-gradient(circle, rgba(110, 226, 255, .42), transparent 66%);
+  --time-shadow: 0 2px 22px rgba(30, 14, 0, .34), 0 26px 80px rgba(24, 10, 0, .42), 0 0 120px var(--clock-glow);
 }
 
 [data-theme="night"] {
   color-scheme: dark;
-  --text: #fdfbff;
-  --text-soft: rgba(240, 238, 255, .92);
-  --text-muted: rgba(208, 205, 240, .78);
-  --accent: #ffd166;
-  --accent-2: #67e8f9;
+  --text: #eef2ff;
+  --text-soft: rgba(214, 224, 255, .92);
+  --text-muted: rgba(170, 182, 235, .8);
+  --accent: #8fc7ff;
+  --accent-2: #a78bfa;
   --status-dot: #67e8f9;
-  --divider: rgba(216, 222, 255, .24);
-  --panel-bg: rgba(10, 6, 34, .56);
-  --panel-bg-desktop: rgba(8, 5, 28, .44);
-  --panel-border: rgba(186, 176, 255, .34);
-  --panel-shadow: 0 34px 100px rgba(1, 2, 12, .72), inset 0 1px 0 rgba(200, 190, 255, .16);
-  --bg-base: linear-gradient(166deg, #0d0430 0%, #230a5e 34%, #3b0f7a 58%, #141b4d 82%, #03061a 100%);
-  --clock-glow: rgba(150, 120, 255, .55);
-  --glow-1: radial-gradient(circle, rgba(168, 85, 247, .42), rgba(88, 28, 135, .18) 40%, transparent 70%);
-  --glow-2: radial-gradient(circle, rgba(34, 211, 238, .32), transparent 66%);
-  --time-shadow: 0 2px 22px rgba(1, 2, 14, .45), 0 26px 90px rgba(1, 2, 14, .55), 0 0 130px var(--clock-glow);
+  --divider: rgba(160, 176, 255, .3);
+  --panel-bg: rgba(8, 4, 34, .62);
+  --panel-bg-desktop: rgba(6, 3, 26, .52);
+  --panel-border: rgba(140, 124, 255, .5);
+  --panel-shadow: 0 34px 100px rgba(0, 1, 10, .74), inset 0 1px 0 rgba(170, 160, 255, .2);
+  --bg-base: linear-gradient(166deg, #0a0330 0%, #22095c 34%, #3a0f7a 58%, #121644 82%, #02040f 100%);
+  --clock-glow: rgba(150, 120, 255, .62);
+  --glow-1: radial-gradient(circle, rgba(168, 85, 247, .48), rgba(88, 28, 135, .2) 40%, transparent 70%);
+  --glow-2: radial-gradient(circle, rgba(34, 211, 238, .36), transparent 66%);
+  --time-shadow: 0 2px 22px rgba(0, 1, 10, .5), 0 26px 90px rgba(0, 1, 10, .6), 0 0 130px var(--clock-glow);
 }
 
 [data-theme] body {
@@ -242,6 +242,7 @@ body.has-background .wash-night {
 
 [data-theme="day"] .atmosphere-star {
   opacity: 0;
+  animation: none;
   transition: opacity var(--motion-theme, 1800ms) ease;
 }
 
@@ -321,6 +322,23 @@ body.has-background .wash-night {
   border-top-color: var(--divider);
 }
 
+/* The daylight scene is bright at the bottom left, so the three-day forecast
+   gets its own soft scrim instead of relying on the photograph's exposure. */
+[data-theme="day"] .forecast-strip {
+  position: relative;
+  text-shadow: 0 1px 4px rgba(2, 10, 26, .6);
+}
+
+[data-theme="day"] .forecast-strip::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -.6rem -.7rem -.5rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(2, 14, 34, .34), rgba(2, 14, 34, .12));
+  pointer-events: none;
+}
+
 [data-theme] .forecast-day + .forecast-day {
   border-left-color: var(--divider);
 }
@@ -331,7 +349,7 @@ body.has-background .wash-night {
 
 [data-theme] .forecast-label,
 [data-theme] .calendar-count,
-[data-theme] .event-time {
+[data-theme] .event-copy .event-time {
   color: var(--accent);
 }
 
